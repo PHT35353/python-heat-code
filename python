@@ -1,0 +1,37 @@
+import CoolProp.CoolProp as CP
+
+
+p = 1  # (pressure in bara)
+m = 2  #  (flow rate in kg/s)
+L = 2257  # (latent heat of steam in kJ/kg)
+
+T_begin = 100  # (begin temperature in C)
+T_end = 120  # (end temperature in C)
+Q_demand = 5000  # (the heat in demand kW)
+
+
+cp_water = 4.18  # (The heat capacity of water in kJ/kg·K)
+
+
+Q_available = m * L # The available heat in (kW)
+
+# This is for using coolprop in order to calculate the fluid property initial and final enthalpy
+H_initial = CP.PropsSI('H', 'T', T_begin + 273.15, 'P', p * 100000, 'Water') / 1000  # (kJ/kg)
+H_final = CP.PropsSI('H', 'T', T_end + 273.15, 'P', p * 100000, 'Water') / 1000  # (kJ/kg)
+print("H_initial:", H_initial)
+print("H_final:", H_final)
+
+#the mass flow rate in the process that heats the steam from 100C to 120C
+m_process = Q_demand / (cp_water * (T_end - T_begin))  #(kg/s)
+
+
+print(f"Mass flow rate of process steam in kg/s:", m_process)
+print(f"Heat required to heat the process steam in KW:" , Q_demand)
+print(f"Heat available from waste steam in KW:", Q_available)
+
+# To verify if the available heat meets demand
+if Q_available >= Q_demand:
+    print("The available waste heat meets the demand.")
+else:
+    print("The available waste heat does not meet the demand and more heat is required.")
+
